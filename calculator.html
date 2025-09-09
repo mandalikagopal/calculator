@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        .calculator-container {
+            width: 320px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background-color: #076839;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .toggle-container {
+            display: flex;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px auto;
+            width: 220px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 15px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .toggle-btn.active {
+            background-color: #076839;
+            color: white;
+        }
+        
+        .display {
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: right;
+            font-size: 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            height: 80px;
+            overflow: hidden;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+        
+        .keypad {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+        
+        .scientific-keypad {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 8px;
+            display: none;
+        }
+        
+        button {
+            padding: 15px 0;
+            border: none;
+            background-color: #f0f0f0;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .operator {
+            background-color: #f8d7da;
+        }
+        
+        .operator:hover {
+            background-color: #f5c6cb;
+        }
+        
+        .equals {
+            background-color: #076839;
+            color: white;
+        }
+        
+        .equals:hover {
+            background-color: #05562f;
+        }
+        
+        .clear {
+            background-color: #d9534f;
+            color: white;
+        }
+        
+        .clear:hover {
+            background-color: #c9302c;
+        }
+        
+        .scientific-btn {
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.7rem;
+            color: #666;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header">
+            <div class="logo">ANNAPURNA PREMIUM</div>
+            <div class="toggle-container">
+                <div class="toggle-btn active" id="standard-toggle">Standard</div>
+                <div class="toggle-btn" id="scientific-toggle">Scientific</div>
+            </div>
+        </div>
+        
+        <div class="display" id="display">0</div>
+        
+        <div class="keypad" id="standard-keypad">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="backspace()">⌫</button>
+            <button class="operator" onclick="appendOperator('%')">%</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendNumber('.')">.</button>
+            <button class="equals" onclick="calculate()" colspan="2">=</button>
+        </div>
+        
+        <div class="scientific-keypad" id="scientific-keypad">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="backspace()">⌫</button>
+            <button class="operator" onclick="appendOperator('%')">%</button>
+            <button class="operator" onclick="calculateFactorial()">x!</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            
+            <button class="scientific-btn" onclick="calculateTrig('sin')">sin</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button class="scientific-btn" onclick="calculateTrig('cos')">cos</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <button class="scientific-btn" onclick="calculateTrig('tan')">tan</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button class="scientific-btn" onclick="calculatePower(2)">x²</button>
+            <button class="scientific-btn" onclick="calculatePower(3)">x³</button>
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendNumber('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+            
+            <button class="scientific-btn" onclick="calculateSqrt()">√</button>
+            <button class="scientific-btn" onclick="calculatePower(1/2)">∛</button>
+            <button class="scientific-btn" onclick="calculateLog('log')">log</button>
+            <button class="scientific-btn" onclick="calculateLog('ln')">ln</button>
+            <button class="scientific-btn" onclick="appendNumber(Math.PI)">π</button>
+        </div>
+        
+        <div class="footer">
+            done by Satya Gopal A V Mandalika
+        </div>
+    </div>
+
+    <script>
+        let currentDisplay = '0';
+        let currentMode = 'standard';
+        
+        const display = document.getElementById('display');
+        const standardToggle = document.getElementById('standard-toggle');
+        const scientificToggle = document.getElementById('scientific-toggle');
+        const standardKeypad = document.getElementById('standard-keypad');
+        const scientificKeypad = document.getElementById('scientific-keypad');
+        
+        // Toggle between standard and scientific calculator
+        standardToggle.addEventListener('click', () => {
+            standardToggle.classList.add('active');
+            scientificToggle.classList.remove('active');
+            standardKeypad.style.display = 'grid';
+            scientificKeypad.style.display = 'none';
+            currentMode = 'standard';
+        });
+        
+        scientificToggle.addEventListener('click', () => {
+            scientificToggle.classList.add('active');
+            standardToggle.classList.remove('active');
+            scientificKeypad.style.display = 'grid';
+            standardKeypad.style.display = 'none';
+            currentMode = 'scientific';
+        });
+        
+        // Display functions
+        function updateDisplay() {
+            display.textContent = currentDisplay;
+        }
+        
+        function clearDisplay() {
+            currentDisplay = '0';
+            updateDisplay();
+        }
+        
+        function backspace() {
+            if (currentDisplay.length === 1 || 
+                (currentDisplay.length === 2 && currentDisplay.startsWith('-'))) {
+                currentDisplay = '0';
+            } else {
+                currentDisplay = currentDisplay.slice(0, -1);
+            }
+            updateDisplay();
+        }
+        
+        function appendNumber(num) {
+            if (currentDisplay === '0' && num !== '.') {
+                currentDisplay = num.toString();
+            } else {
+                currentDisplay += num.toString();
+            }
+            updateDisplay();
+        }
+        
+        function appendOperator(operator) {
+            currentDisplay += operator;
+            updateDisplay();
+        }
+        
+        // Basic calculation function
+        function calculate() {
+            try {
+                // Replace × with * and evaluate
+                let calculation = currentDisplay.replace(/×/g, '*');
+                let result = eval(calculation);
+                
+                // Format the result for display
+                if (result === Infinity || result === -Infinity) {
+                    currentDisplay = 'Error';
+                } else {
+                    currentDisplay = parseFloat(result.toFixed(10)).toString();
+                }
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        // Scientific calculator functions
+        function calculateFactorial() {
+            try {
+                let num = parseFloat(currentDisplay);
+                if (num < 0 || !Number.isInteger(num)) {
+                    currentDisplay = 'Error';
+                } else {
+                    let result = 1;
+                    for (let i = 2; i <= num; i++) {
+                        result *= i;
+                    }
+                    currentDisplay = result.toString();
+                }
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        function calculateTrig(func) {
+            try {
+                let num = parseFloat(currentDisplay);
+                let result;
+                
+                // Convert to radians for the calculation
+                switch(func) {
+                    case 'sin':
+                        result = Math.sin(num);
+                        break;
+                    case 'cos':
+                        result = Math.cos(num);
+                        break;
+                    case 'tan':
+                        result = Math.tan(num);
+                        break;
+                }
+                
+                currentDisplay = parseFloat(result.toFixed(10)).toString();
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        function calculatePower(power) {
+            try {
+                let num = parseFloat(currentDisplay);
+                let result = Math.pow(num, power);
+                
+                currentDisplay = parseFloat(result.toFixed(10)).toString();
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        function calculateSqrt() {
+            try {
+                let num = parseFloat(currentDisplay);
+                if (num < 0) {
+                    currentDisplay = 'Error';
+                } else {
+                    let result = Math.sqrt(num);
+                    currentDisplay = parseFloat(result.toFixed(10)).toString();
+                }
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+        
+        function calculateLog(type) {
+            try {
+                let num = parseFloat(currentDisplay);
+                if (num <= 0) {
+                    currentDisplay = 'Error';
+                } else {
+                    let result;
+                    if (type === 'log') {
+                        result = Math.log10(num);
+                    } else { // ln
+                        result = Math.log(num);
+                    }
+                    currentDisplay = parseFloat(result.toFixed(10)).toString();
+                }
+                updateDisplay();
+            } catch (error) {
+                currentDisplay = 'Error';
+                updateDisplay();
+            }
+        }
+    </script>
+</body>
+</html>
